@@ -1,57 +1,71 @@
 #include "ScalarResults.h"
+
 #include <stdexcept>
 
-ScalarResults::~ScalarResults() = default;
-
 std::optional<ScalarResult> ScalarResults::operator[](const std::string& tradeId) const {
-    if (!containsTrade(tradeId)) {
+    auto it = entries_.find(tradeId);
+    if (it == entries_.end()) {
         return std::nullopt;
     }
 
-    std::optional<double> priceResult = std::nullopt;
-    std::optional<std::string> error = std::nullopt;
-
-    auto resultIt = results_.find(tradeId);
-    if (resultIt != results_.end()) {
-        priceResult = resultIt->second;
-    }
-
-    auto errorIt = errors_.find(tradeId);
-    if (errorIt != errors_.end()) {
-        error = errorIt->second;
-    }
-
-    return ScalarResult(tradeId, priceResult, error);
+    const Entry& e = it->second;
+    return ScalarResult(tradeId, e.result, e.error);
 }
 
 bool ScalarResults::containsTrade(const std::string& tradeId) const {
-    return results_.find(tradeId) != results_.end() || errors_.find(tradeId) != errors_.end();
+    return entries_.find(tradeId) != entries_.end();
 }
 
 void ScalarResults::addResult(const std::string& tradeId, double result) {
-    results_[tradeId] = result;
+    auto& e = entries_[tradeId];     // creates entry if missing
+    e.result = result;
 }
 
 void ScalarResults::addError(const std::string& tradeId, const std::string& error) {
-    errors_[tradeId] = error;
+    auto& e = entries_[tradeId];
+    e.error = error;
+}
+
+// -------- Iterator --------
+
+ScalarResults::Iterator::Iterator(const ScalarResults* parent, bool atEnd)
+    : parent_(parent) {
+    if (!parent_) return;
+    it_ = atEnd ? parent_->entries_.cend() : parent_->entries_.cbegin();
 }
 
 ScalarResults::Iterator& ScalarResults::Iterator::operator++() {
-    throw std::runtime_error("Iterator not implemented");
+    if (!parent_) return *this;
+    if (it_ != parent_->entries_.cend()) {
+        ++it_;
+    }
+    return *this;
 }
 
 ScalarResult ScalarResults::Iterator::operator*() const {
-    throw std::runtime_error("Iterator not implemented");
+    if (!parent_) {
+        throw std::runtime_error("Cannot dereference invalid iterator");
+    }
+    if (it_ == parent_->entries_.cend()) {
+        throw std::runtime_error("Cannot dereference end iterator");
+    }
+
+    const std::string& tradeId = it_->first;
+    const Entry& e = it_->second;
+
+    return ScalarResult(tradeId, e.result, e.error);
 }
 
 bool ScalarResults::Iterator::operator!=(const Iterator& other) const {
-    throw std::runtime_error("Iterator not implemented");
+    if (parent_ != other.parent_) return true;
+    if (!parent_) return false;
+    return it_ != other.it_;
 }
 
 ScalarResults::Iterator ScalarResults::begin() const {
-    throw std::runtime_error("Not implemented");
+    return Iterator(this, false);
 }
 
 ScalarResults::Iterator ScalarResults::end() const {
-    throw std::runtime_error("Not implemented");
+    return Iterator(this, true);
 }
