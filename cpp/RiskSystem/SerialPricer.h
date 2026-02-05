@@ -11,7 +11,8 @@
 
 class SerialPricer {
 private:
-    std::map<std::string, IPricingEngine*> pricers_;
+    // using a map is too slow and would ideally be using smart ptrs
+    std::unordered_map<std::string, std::unique_ptr<IPricingEngine>> pricers_;
     void loadPricers();
     
 public:
