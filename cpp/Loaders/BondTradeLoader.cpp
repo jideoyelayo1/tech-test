@@ -6,20 +6,39 @@
 #include <iomanip>
 #include <chrono>
 
+/**
+ * It would be better to use smart pointers here to ensure proper memory management and avoid potential memory leaks but we are not allowed to change the tests
+ */
+
+// internal linkage — meaning it’s only visible inside this translation unit
+namespace {
+    std::string trim(std::string value) {
+        value.erase(value.begin(), std::find_if(value.begin(), value.end(), [](unsigned char ch) {
+            return !std::isspace(ch);
+        }));
+
+        value.erase(std::find_if(value.rbegin(), value.rend(), [](unsigned char ch) {
+            return !std::isspace(ch);
+        }).base(), value.end());
+
+        return value;
+    }
+}
+
 BondTrade* BondTradeLoader::createTradeFromLine(std::string line) {
     std::vector<std::string> items;
     std::stringstream ss(line);
     std::string item;
     
     while (std::getline(ss, item, separator)) {
-        items.push_back(item);
+        items.push_back(trim(item));
     }
     
     if (items.size() < 7) {
         throw std::runtime_error("Invalid line format");
     }
     
-    BondTrade* trade = new BondTrade(items[6]);
+    BondTrade* trade = new BondTrade(items[6], items[0]);
     
     std::tm tm = {};
     std::istringstream dateStream(items[1]);
@@ -45,14 +64,14 @@ void BondTradeLoader::loadTradesFromFile(std::string filename, BondTradeList& tr
         throw std::runtime_error("Cannot open file: " + filename);
     }
     
-    int lineCount = 0;
+    bool isFirstLine = true;
     std::string line;
     while (std::getline(stream, line)) {
-        if (lineCount == 0) {
+        if (isFirstLine) {
+            isFirstLine = false;
         } else {
             tradeList.add(createTradeFromLine(line));
         }
-        lineCount++;
     }
 }
 
