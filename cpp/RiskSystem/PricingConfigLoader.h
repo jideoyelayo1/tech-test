@@ -3,16 +3,19 @@
 
 #include "PricingEngineConfig.h"
 #include <string>
+#include <string_view>
 
 class PricingConfigLoader {
 private:
     std::string configFile_;
-    PricingEngineConfig parseXml(const std::string& content);
-    
+
+    PricingEngineConfig parseXml(std::string_view content) const;
+
 public:
-    std::string getConfigFile() const;
-    void setConfigFile(const std::string& file);
-    PricingEngineConfig loadConfig();
+    const std::string& getConfigFile() const noexcept;
+    void setConfigFile(std::string_view file);
+
+    PricingEngineConfig loadConfig() const;
 };
 
 #endif // PRICINGCONFIGLOADER_H
