@@ -3,6 +3,7 @@
 
 #include "ITradeLoader.h"
 #include "../Models/FxTrade.h"
+#include "LoaderHelper.h"
 #include <string>
 #include <vector>
 

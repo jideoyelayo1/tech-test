@@ -4,6 +4,7 @@
 #include "ITradeLoader.h"
 #include "../Models/BondTrade.h"
 #include "../Models/BondTradeList.h"
+#include "LoaderHelper.h"
 #include <string>
 #include <vector>
 #include <memory>

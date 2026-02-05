@@ -7,23 +7,10 @@
 #include <chrono>
 
 /**
- * It would be better to use smart pointers here to ensure proper memory management and avoid potential memory leaks but we are not allowed to change the tests
+ * It would be better to use smart pointers here to ensure proper memory management and avoid potential memory leaks 
+ * but we are not allowed to change the tests
  */
 
-// internal linkage — meaning it’s only visible inside this translation unit
-namespace {
-    std::string trim(std::string value) {
-        value.erase(value.begin(), std::find_if(value.begin(), value.end(), [](unsigned char ch) {
-            return !std::isspace(ch);
-        }));
-
-        value.erase(std::find_if(value.rbegin(), value.rend(), [](unsigned char ch) {
-            return !std::isspace(ch);
-        }).base(), value.end());
-
-        return value;
-    }
-}
 
 BondTrade* BondTradeLoader::createTradeFromLine(std::string line) {
     std::vector<std::string> items;
@@ -31,7 +18,7 @@ BondTrade* BondTradeLoader::createTradeFromLine(std::string line) {
     std::string item;
     
     while (std::getline(ss, item, separator)) {
-        items.push_back(trim(item));
+        items.push_back(helper::trim(item));
     }
     
     if (items.size() < 7) {

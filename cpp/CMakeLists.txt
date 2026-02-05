@@ -20,6 +20,8 @@ add_library(Loaders
     Loaders/BondTradeLoader.cpp
     Loaders/FxTradeLoader.h
     Loaders/FxTradeLoader.cpp
+    Loaders/LoaderHelper.h
+    Loaders/LoaderHelper.cpp
 )
 
 target_include_directories(Loaders PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -83,4 +85,3 @@ file(COPY ${CMAKE_SOURCE_DIR}/Loaders/TradeData DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/Loaders/TradeData DESTINATION ${CMAKE_BINARY_DIR}/Loaders)
 file(COPY ${CMAKE_SOURCE_DIR}/RiskSystem/PricingConfig DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/RiskSystem/PricingConfig DESTINATION ${CMAKE_BINARY_DIR}/RiskSystem)
-
