@@ -17,8 +17,10 @@ private:
     BondTrade* createTradeFromLine(std::string line);
     void loadTradesFromFile(std::string filename, BondTradeList& tradeList);
     
+    
 public:
     std::vector<ITrade*> loadTrades() override;
+    void streamTrades(const std::function<void(std::unique_ptr<ITrade>)>& onTrade) override;
     std::string getDataFile() const override;
     void setDataFile(const std::string& file) override;
 };

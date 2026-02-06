@@ -7,21 +7,20 @@
 #include <string_view>
 #include <string>
 
-namespace {
-    std::unique_ptr<IPricingEngine> createPricer(std::string_view typeName) {
-        if (typeName == "HmxLabs.TechTest.Pricers.GovBondPricingEngine" || typeName == "GovBondPricingEngine")
-            return std::make_unique<GovBondPricingEngine>();
 
-        if (typeName == "HmxLabs.TechTest.Pricers.CorpBondPricingEngine" || typeName == "CorpBondPricingEngine")
-            return std::make_unique<CorpBondPricingEngine>();
 
-        if (typeName == "HmxLabs.TechTest.Pricers.FxPricingEngine" || typeName == "FxPricingEngine")
-            return std::make_unique<FxPricingEngine>();
+std::unique_ptr<IPricingEngine> pricing::createPricer(std::string_view typeName) {
+    if (typeName == "HmxLabs.TechTest.Pricers.GovBondPricingEngine" || typeName == "GovBondPricingEngine")
+        return std::make_unique<GovBondPricingEngine>();
 
-        throw std::runtime_error("Unknown pricing engine type: " + std::string(typeName));
-    }
+    if (typeName == "HmxLabs.TechTest.Pricers.CorpBondPricingEngine" || typeName == "CorpBondPricingEngine")
+        return std::make_unique<CorpBondPricingEngine>();
+
+    if (typeName == "HmxLabs.TechTest.Pricers.FxPricingEngine" || typeName == "FxPricingEngine")
+        return std::make_unique<FxPricingEngine>();
+
+    throw std::runtime_error("Unknown pricing engine type: " + std::string(typeName));
 }
-
 // SerialPricer::~SerialPricer() {
 //     // pricers_.clear(); // Not needed with smart pointers
 // }
@@ -44,7 +43,7 @@ void SerialPricer::loadPricers() {
             throw std::runtime_error("Invalid pricing configuration: empty tradeType");
         }
 
-        auto [it, inserted] = pricers_.emplace(tradeType, createPricer(configItem.getTypeName()));
+        auto [it, inserted] = pricers_.emplace(tradeType, pricing::createPricer(configItem.getTypeName()));
 
         if (!inserted) {
             throw std::runtime_error("Duplicate pricing configuration for tradeType: " + tradeType);

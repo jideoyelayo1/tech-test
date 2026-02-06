@@ -80,3 +80,30 @@ std::string BondTradeLoader::getDataFile() const {
 void BondTradeLoader::setDataFile(const std::string& file) {
     dataFile_ = file;
 }
+
+void BondTradeLoader::streamTrades(const std::function<void(std::unique_ptr<ITrade>)>& onTrade) {
+    if (!onTrade) {
+        throw std::invalid_argument("A valid callback must be provided");
+    }
+
+    if (dataFile_.empty()) {
+        throw std::invalid_argument("Filename cannot be null");
+    }
+
+    std::ifstream stream(dataFile_);
+    if (!stream.is_open()) {
+        throw std::runtime_error("Cannot open file: " + dataFile_);
+    }
+
+    bool isFirstLine = true;
+    std::string line;
+    while (std::getline(stream, line)) {
+        if (isFirstLine) {
+            isFirstLine = false;
+            continue;
+        }
+
+        BondTrade* trade = createTradeFromLine(line);
+        onTrade(std::unique_ptr<ITrade>(trade));
+    }
+}

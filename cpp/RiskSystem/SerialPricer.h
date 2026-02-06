@@ -21,4 +21,8 @@ public:
                IScalarResultReceiver* resultReceiver);
 };
 
+namespace pricing{
+    std::unique_ptr<IPricingEngine> createPricer(std::string_view typeName);
+};
+
 #endif // SERIALPRICER_H

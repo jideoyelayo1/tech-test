@@ -63,6 +63,16 @@ std::vector<ITrade*> FxTradeLoader::loadTrades() {
     return trades;
 }
 
+void FxTradeLoader::streamTrades(const std::function<void(std::unique_ptr<ITrade>)>& onTrade) {
+    if (!onTrade) {
+        throw std::invalid_argument("A valid callback must be provided");
+    }
+
+    getTrades([&](ITrade* t) {
+        onTrade(std::unique_ptr<ITrade>(t));
+    }, dataFile_);
+}
+
 std::string FxTradeLoader::getDataFile() const {
     return dataFile_;
 }
