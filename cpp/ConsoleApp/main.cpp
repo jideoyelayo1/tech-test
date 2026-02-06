@@ -1,8 +1,5 @@
-#include "../RiskSystem/SerialTradeLoader.h"
 #include "../RiskSystem/StreamingTradeLoader.h"
 #include "../Models/ScalarResults.h"
-#include "../RiskSystem/SerialPricer.h"
-#include "../RiskSystem/ParallelPricer.h"
 #include "../RiskSystem/ScreenResultPrinter.h"
 #include <iostream>
 #include <string>
@@ -28,12 +25,15 @@ int _getch() {
 #endif
 
 int main(int argc, char* argv[]) {
-    SerialTradeLoader tradeLoader;
-    auto allTrades = tradeLoader.loadTrades();
-    
+    StreamingTradeLoader tradeLoader;
     ScalarResults results;
-    SerialPricer pricer;
-    pricer.price(allTrades, &results);
+    tradeLoader.loadAndPrice(&results);
+
+    // SerialTradeLoader tradeLoader;
+    // auto allTrades = tradeLoader.loadTrades();
+    // ParallelPricer pricer;
+    // // SerialPricer pricer;
+    // pricer.price(allTrades, &results);
     
     ScreenResultPrinter screenPrinter;
     screenPrinter.printResults(results);

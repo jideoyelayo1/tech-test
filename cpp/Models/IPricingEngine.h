@@ -7,8 +7,7 @@
 class IPricingEngine {
 public:
     virtual ~IPricingEngine() = default;
-    virtual void price(ITrade* trade, IScalarResultReceiver* resultReceiver) = 0;
+    virtual void price(const ITrade* trade, IScalarResultReceiver* resultReceiver) = 0;
 };
 
 #endif // IPRICINGENGINE_H
-

@@ -7,7 +7,7 @@
 
 class SerialTradeLoader {
 private:
-    std::vector<ITradeLoader*> getTradeLoaders();
+    std::vector<std::unique_ptr<ITradeLoader>> getTradeLoaders();
     
 public:
     std::vector<std::vector<ITrade*>> loadTrades();

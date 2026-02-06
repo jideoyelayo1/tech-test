@@ -2,28 +2,32 @@
 #include "../Loaders/BondTradeLoader.h"
 #include "../Loaders/FxTradeLoader.h"
 
-std::vector<ITradeLoader*> SerialTradeLoader::getTradeLoaders() {
-    std::vector<ITradeLoader*> loaders;
-    
-    BondTradeLoader* bondLoader = new BondTradeLoader();
-    bondLoader->setDataFile("TradeData/BondTrades.dat");
-    loaders.push_back(bondLoader);
-    
-    FxTradeLoader* fxLoader = new FxTradeLoader();
+std::vector<std::unique_ptr<ITradeLoader>> SerialTradeLoader::getTradeLoaders() {
+    std::vector<std::unique_ptr<ITradeLoader>> loaders;
+    loaders.reserve(2);
+
+    loaders.push_back(
+        std::make_unique<BondTradeLoader>("TradeData/BondTrades.dat"));
+        
+
+    auto fxLoader = std::make_unique<FxTradeLoader>();
     fxLoader->setDataFile("TradeData/FxTrades.dat");
-    loaders.push_back(fxLoader);
-    
+    loaders.push_back(std::move(fxLoader));
+
     return loaders;
 }
 
-std::vector<std::vector<ITrade*>> SerialTradeLoader::loadTrades() {
+std::vector<std::vector<ITrade*>>
+SerialTradeLoader::loadTrades() {
     auto loaders = getTradeLoaders();
+
     std::vector<std::vector<ITrade*>> result;
-    
-    for (auto loader : loaders) {
+    result.reserve(loaders.size());
+
+    for (auto& loader : loaders) {
         result.push_back(loader->loadTrades());
     }
-    
+
     return result;
 }
 

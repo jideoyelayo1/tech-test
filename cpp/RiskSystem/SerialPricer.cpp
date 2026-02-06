@@ -21,6 +21,22 @@ std::unique_ptr<IPricingEngine> pricing::createPricer(std::string_view typeName)
 
     throw std::runtime_error("Unknown pricing engine type: " + std::string(typeName));
 }
+
+std::unique_ptr<IPricingEngine> pricing::clonePricer(const IPricingEngine* prototype) {
+    if (dynamic_cast<const GovBondPricingEngine*>(prototype) != nullptr) {
+        return std::make_unique<GovBondPricingEngine>();
+    }
+
+    if (dynamic_cast<const CorpBondPricingEngine*>(prototype) != nullptr) {
+        return std::make_unique<CorpBondPricingEngine>();
+    }
+
+    if (dynamic_cast<const FxPricingEngine*>(prototype) != nullptr) {
+        return std::make_unique<FxPricingEngine>();
+    }
+
+    throw std::runtime_error("Unsupported pricing engine prototype");
+}
 // SerialPricer::~SerialPricer() {
 //     // pricers_.clear(); // Not needed with smart pointers
 // }

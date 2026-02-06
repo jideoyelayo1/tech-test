@@ -5,8 +5,6 @@
 #include "../RiskSystem/SerialPricer.h"
 #include <stdexcept>
 
-#include <iostream>
-
 std::vector<std::unique_ptr<ITradeLoader>> StreamingTradeLoader::getTradeLoaders() {
     std::vector<std::unique_ptr<ITradeLoader>> loaders;
     
@@ -49,7 +47,7 @@ StreamingTradeLoader::~StreamingTradeLoader() {
 }
 
 
-void StreamingTradeLoader::loadAndPrice(std::unique_ptr<IScalarResultReceiver>  resultReceiver) {
+void StreamingTradeLoader::loadAndPrice(IScalarResultReceiver* resultReceiver) {
     if (resultReceiver == nullptr) {
         throw std::invalid_argument("resultReceiver cannot be null");
     }
@@ -63,17 +61,15 @@ void StreamingTradeLoader::loadAndPrice(std::unique_ptr<IScalarResultReceiver>  
         loaderOwners.emplace_back(std::move(loader));
     }
 
-    auto foo = [this, &resultReceiver](std::unique_ptr<ITrade> tradeRaw) {
+    auto foo = [this, resultReceiver](std::unique_ptr<ITrade> tradeRaw) {
             const std::string tradeType = tradeRaw->getTradeType();
             auto pricerIt = pricers_.find(tradeType);
             if (pricerIt == pricers_.end()) {
                 resultReceiver->addError(tradeRaw->getTradeId(), "No Pricing Engines available for this trade type");
                 return;
-            } else{
-                std::cout << "Pricing trade " << tradeRaw->getTradeId() << " of type " << tradeType << "\n";
             }
 
-            pricerIt->second->price(tradeRaw.get(), resultReceiver.get());
+            pricerIt->second->price(tradeRaw.get(), resultReceiver);
         };
 
     for (const auto& loader : loaderOwners) {

@@ -2,14 +2,13 @@
 #include <random>
 #include <thread>
 #include <chrono>
-#include <iostream>
 #include <stdexcept>
 #include <limits>
 
 BasePricingEngine::BasePricingEngine() : delay_(5000) {
 }
 
-void BasePricingEngine::price(ITrade* trade, IScalarResultReceiver* resultReceiver) {
+void BasePricingEngine::price(const ITrade* trade, IScalarResultReceiver* resultReceiver) {
     if (resultReceiver == nullptr) {
         throw std::invalid_argument("resultReceiver_");
     }
@@ -37,7 +36,7 @@ void BasePricingEngine::setDelay(int delay) {
     delay_ = delay;
 }
 
-void BasePricingEngine::priceTrade(ITrade* trade, IScalarResultReceiver* resultReceiver) {
+void BasePricingEngine::priceTrade(const ITrade* trade, IScalarResultReceiver* resultReceiver) {
     if (!isTradeTypeSupported(trade->getTradeType())) {
         if (trade->getTradeId().empty()) {
             throw std::invalid_argument("Trade does not have a valid ID");
@@ -47,7 +46,6 @@ void BasePricingEngine::priceTrade(ITrade* trade, IScalarResultReceiver* resultR
         return;
     }
     
-    std::cout << "Started pricing trade: " << trade->getTradeId() << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
     double result = calculateResult();
     
@@ -64,7 +62,6 @@ void BasePricingEngine::priceTrade(ITrade* trade, IScalarResultReceiver* resultR
         }
     }
     
-    std::cout << "Completed pricing trade: " << trade->getTradeId() << std::endl;
 }
 
 double BasePricingEngine::calculateResult() {
@@ -97,4 +94,3 @@ std::map<std::string, std::string>& BasePricingEngine::getTradesToWarn() {
     }
     return tradesToWarn;
 }
-

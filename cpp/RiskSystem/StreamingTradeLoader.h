@@ -19,7 +19,7 @@ private:
 public:
     ~StreamingTradeLoader();
     
-    void loadAndPrice(std::unique_ptr<IScalarResultReceiver> resultReceiver);
+    void loadAndPrice(IScalarResultReceiver* resultReceiver);
 };
 
 #endif // STREAMINGTRADELOADER_H

@@ -5,6 +5,7 @@
 #include "../Models/ITrade.h"
 #include "../Models/IScalarResultReceiver.h"
 #include "PricingConfigLoader.h"
+#include <memory>
 #include <map>
 #include <vector>
 #include <string>
@@ -23,6 +24,7 @@ public:
 
 namespace pricing{
     std::unique_ptr<IPricingEngine> createPricer(std::string_view typeName);
+    std::unique_ptr<IPricingEngine> clonePricer(const IPricingEngine* prototype);
 };
 
 #endif // SERIALPRICER_H

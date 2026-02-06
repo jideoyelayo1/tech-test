@@ -57,8 +57,9 @@ void getTrades(const std::function<void(ITrade*)>& onTrade, std::string_view dat
 
 }
 
-std::vector<ITrade*> FxTradeLoader::loadTrades() {
+std::vector<ITrade*>FxTradeLoader::loadTrades() {
     std::vector<ITrade*> trades;
+
     getTrades([&](ITrade* t) { trades.push_back(t); }, dataFile_);
     return trades;
 }

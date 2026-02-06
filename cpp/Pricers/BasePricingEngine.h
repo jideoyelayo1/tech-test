@@ -13,7 +13,7 @@ protected:
     BasePricingEngine();
     virtual ~BasePricingEngine() = default;
     
-    void price(ITrade* trade, IScalarResultReceiver* resultReceiver) override;
+    void price(const ITrade* trade, IScalarResultReceiver* resultReceiver) override;
     
 public:
     bool isTradeTypeSupported(const std::string& tradeType) const;
@@ -22,7 +22,7 @@ protected:
     void addSupportedTradeType(const std::string& tradeType);
     int getDelay() const;
     void setDelay(int delay);
-    virtual void priceTrade(ITrade* trade, IScalarResultReceiver* resultReceiver);
+    virtual void priceTrade(const ITrade* trade, IScalarResultReceiver* resultReceiver);
     virtual double calculateResult();
     
 private:

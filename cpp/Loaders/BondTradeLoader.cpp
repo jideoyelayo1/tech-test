@@ -6,11 +6,6 @@
 #include <iomanip>
 #include <chrono>
 
-/**
- * It would be better to use smart pointers here to ensure proper memory management and avoid potential memory leaks 
- * but we are not allowed to change the tests
- */
-
 
 BondTrade* BondTradeLoader::createTradeFromLine(std::string line) {
     std::vector<std::string> items;
@@ -41,31 +36,31 @@ BondTrade* BondTradeLoader::createTradeFromLine(std::string line) {
     return trade;
 }
 
-void BondTradeLoader::loadTradesFromFile(std::string filename, BondTradeList& tradeList) {
+void BondTradeLoader::loadTradesFromFile(const std::string& filename, BondTradeList& tradeList) {
     if (filename.empty()) {
         throw std::invalid_argument("Filename cannot be null");
     }
-    
+
     std::ifstream stream(filename);
     if (!stream.is_open()) {
         throw std::runtime_error("Cannot open file: " + filename);
     }
-    
+
     bool isFirstLine = true;
     std::string line;
     while (std::getline(stream, line)) {
         if (isFirstLine) {
             isFirstLine = false;
-        } else {
-            tradeList.add(createTradeFromLine(line));
+            continue;
         }
+        tradeList.add(createTradeFromLine(line));
     }
 }
+
 
 std::vector<ITrade*> BondTradeLoader::loadTrades() {
     BondTradeList tradeList;
     loadTradesFromFile(dataFile_, tradeList);
-    
     std::vector<ITrade*> result;
     for (size_t i = 0; i < tradeList.size(); ++i) {
         result.push_back(tradeList[i]);
@@ -103,7 +98,7 @@ void BondTradeLoader::streamTrades(const std::function<void(std::unique_ptr<ITra
             continue;
         }
 
-        BondTrade* trade = createTradeFromLine(line);
-        onTrade(std::unique_ptr<ITrade>(trade));
+        std::unique_ptr<ITrade> trade(createTradeFromLine(line));
+        onTrade(std::move(trade));
     }
 }
